@@ -1,10 +1,10 @@
 import Footer from '../Components/Footer'
-import { Outlet } from 'react-router-dom'
 import "../App.css"
 import Header from '../Components/Header'
 import { ThemeProvider } from '../Context/Theme'
 import { useState, useEffect } from 'react'
 import { TodoProvider, todoType } from '../Context/Todo';
+import Home from '../Components/Home'
 
 
 const RootLayout = () => {
@@ -29,32 +29,44 @@ const RootLayout = () => {
   }, [themeMode]);
 
 
-  const [todos, setTodos] = useState<todoType[]>([{
-    id: 1,
-    todo: "wake up at 8 AM",
-    completed: false
-}]);
+  const [todos, setTodos] = useState<todoType[]>([]);
 
 
-const addTodo = (todo: todoType) => {
+  //logic for ttodo context
+
+  const addTodo = (todo: todoType) => {
     setTodos((oldTodos) => [{ ...todo, id: Date.now() }, ...oldTodos]);
-};
+  };
 
-const updateTodo = (id: number, todo: todoType) => {
+  const updateTodo = (id: number, todo: todoType) => {
     setTodos((prev) => prev.map((prevtodo) => (prevtodo.id === id ? todo : prevtodo)));
-};
+  };
 
-const deleteTodo = (id: number) => {
+  const deleteTodo = (id: number) => {
     setTodos((oldTodo) => oldTodo.filter((todo) => todo.id !== id));
-};
+  };
 
-const toggleComplete = (id: number) => {
+  const toggleComplete = (id: number) => {
     setTodos((prev) =>
-        prev.map((prevTodo) =>
-            prevTodo.id === id ? { ...prevTodo, completed: !prevTodo.completed } : prevTodo
-        )
+      prev.map((prevTodo) =>
+        prevTodo.id === id ? { ...prevTodo, completed: !prevTodo.completed } : prevTodo
+      )
     );
-};
+  };
+
+  useEffect(() => {
+    const todos = localStorage.getItem("todos");
+
+    if (todos && todos.length > 0) {
+      setTodos(JSON.parse(todos));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }, [todos])
+
+
   return (
 
 
@@ -63,8 +75,8 @@ const toggleComplete = (id: number) => {
         <div className=' relative'>
           <Header />
 
-          <main className='p-5 sm:p-10 mx-auto'>
-            <Outlet />
+          <main className='p-3 sm:p-10 mx-auto'>
+            <Home todos={todos}  />
           </main>
           <Footer />
         </div>
