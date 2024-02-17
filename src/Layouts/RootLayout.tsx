@@ -29,10 +29,11 @@ const RootLayout = () => {
   }, [themeMode]);
 
 
-  const [todos, setTodos] = useState<todoType[]>([]);
+  
 
 
   //logic for ttodo context
+  const [todos, setTodos] = useState<todoType[]>([]);
 
   const addTodo = (todo: todoType) => {
     setTodos((oldTodos) => [{ ...todo, id: Date.now() }, ...oldTodos]);
